@@ -15,7 +15,6 @@ type Secret struct {
 
 type Functions struct {
 	config *functions.Config
-	client client.IFunctionsClient
 }
 
 func InitFunctions(secret Secret) (f *Functions, err error) {
@@ -34,15 +33,15 @@ func InitFunctions(secret Secret) (f *Functions, err error) {
 
 func (f *Functions) GetLastFunctionsRun(name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
 
-	if f.client == nil {
-		client, err := client.NewClient(f.config)
+	client, err := client.NewClient(f.config)
 
-		if err != nil {
-			return nil, err
-		}
-
-		f.client = client
+	if err != nil {
+		return nil, err
 	}
 
-	return f.client.GetLastFunctionsRun(f.config, name, validationString, seconds)
+	lastRun, err = client.GetLastFunctionsRun(f.config, name, validationString, seconds)
+
+	client.Close()
+
+	return lastRun, err
 }

@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 	"time"
@@ -16,30 +15,15 @@ import (
 )
 
 type Client struct {
-	client *logadmin.Client
+	client ILoggingClient
 }
 
 func NewClient(config *functions.Config) (f *Client, err error) {
-	loggingClient, err := logging.NewClient(config.Context, config.Credentials.ProjectID, config.Option)
-
-	if err != nil {
-		logrus.Errorf("Failed to create logging client: %s\n", err)
-		return nil, err
-	}
-
-	defer loggingClient.Close()
-
 	adminClient, err := logadmin.NewClient(config.Context, config.Credentials.ProjectID, config.Option)
 
 	if err != nil {
 		logrus.Errorf("Failed to create logadmin client: %s\n", err)
 		return nil, err
-	}
-
-	//defer adminClient.Close()
-
-	loggingClient.OnError = func(err error) {
-		log.Printf("client.OnError: %v", err)
 	}
 
 	return &Client{
@@ -101,6 +85,10 @@ func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationS
 
 	return lastRun, nil
 
+}
+
+func (c *Client) Close() {
+	defer c.client.Close()
 }
 
 func (c *Client) matchReturn(expected string, content interface{}) bool {
