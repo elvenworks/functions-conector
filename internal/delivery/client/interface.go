@@ -19,5 +19,4 @@ type ILoggingClient interface {
 type IFunctionsClient interface {
 	GetLastFunctionsRun(config *functions.Config, name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error)
 	Close()
-	matchReturn(expected string, content interface{}) bool
 }

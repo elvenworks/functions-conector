@@ -21,11 +21,6 @@ func (mock MockClient) GetLastFunctionsRun(config *functions.Config, name, valid
 func (mock MockClient) Close() {
 }
 
-func (mock MockClient) matchReturn(expected string, content interface{}) bool {
-	args := mock.Called()
-	return args.Bool(0)
-}
-
 type MockLogging struct {
 	mock.Mock
 }
