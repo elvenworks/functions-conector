@@ -77,10 +77,14 @@ func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationS
 		Timestamp: entriesClean[0].Timestamp,
 	}
 
-	match := c.matchReturn(validationString, entriesClean[0].Payload)
+	if validationString != "" {
+		match := c.matchReturn(validationString, entriesClean[0].Payload)
 
-	if !match {
-		return lastRun, fmt.Errorf("-> %v - %v", entriesClean[0].Payload, entriesClean[1].Payload)
+		if !match {
+			return lastRun, fmt.Errorf("%v - %v", entriesClean[0].Payload, entriesClean[1].Payload)
+		}
+	} else {
+		return lastRun, fmt.Errorf("failed loading validation string")
 	}
 
 	return lastRun, nil
