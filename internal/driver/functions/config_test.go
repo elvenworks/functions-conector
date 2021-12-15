@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	apiv1 "cloud.google.com/go/functions/apiv1"
-	"github.com/elvenworks/functions-conector/internal/domain"
+	"github.com/elvenworks/functions-conector/domain"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 )

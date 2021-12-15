@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/logging/logadmin"
-	"github.com/elvenworks/functions-conector/internal/domain"
+	"github.com/elvenworks/functions-conector/domain"
 	"github.com/elvenworks/functions-conector/internal/driver/functions"
 )
 

@@ -10,7 +10,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 
-	"github.com/elvenworks/functions-conector/internal/domain"
+	"github.com/elvenworks/functions-conector/domain"
 )
 
 type Config struct {

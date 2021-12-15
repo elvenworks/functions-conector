@@ -8,7 +8,7 @@ import (
 
 	"cloud.google.com/go/logging"
 	"cloud.google.com/go/logging/logadmin"
-	"github.com/elvenworks/functions-conector/internal/domain"
+	"github.com/elvenworks/functions-conector/domain"
 	"github.com/elvenworks/functions-conector/internal/driver/functions"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/iterator"
