@@ -3,8 +3,8 @@ package functions
 import (
 	"time"
 
+	"github.com/elvenworks/functions-conector/domain"
 	"github.com/elvenworks/functions-conector/internal/delivery/client"
-	"github.com/elvenworks/functions-conector/internal/domain"
 	"github.com/elvenworks/functions-conector/internal/driver/functions"
 	"github.com/sirupsen/logrus"
 )

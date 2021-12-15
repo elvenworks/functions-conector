@@ -3,7 +3,7 @@ package functions
 import (
 	"time"
 
-	"github.com/elvenworks/functions-conector/internal/domain"
+	"github.com/elvenworks/functions-conector/domain"
 	"github.com/stretchr/testify/mock"
 )
 
