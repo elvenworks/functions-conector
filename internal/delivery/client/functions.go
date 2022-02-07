@@ -35,7 +35,35 @@ func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationS
 	const functionExecutionTook = "Function execution took"
 	var entries []*logging.Entry
 	var entriesClean []*logging.Entry
+	var countExists = 0
 	lastSeconds := time.Now().Add(-seconds * time.Second).Format(time.RFC3339)
+
+	iterExists := c.client.Entries(config.Context,
+		logadmin.Filter(fmt.Sprintf(`resource.type="cloud_function" AND resource.labels.function_name="%s"`, name)),
+		logadmin.NewestFirst(),
+	)
+
+	for {
+		_, err := iterExists.Next()
+
+		if countExists > 0 {
+			break
+		}
+
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			logrus.Errorf("could not read time series value for count, err: %s\n", err)
+			break
+		}
+
+		countExists = countExists + 1
+	}
+
+	if countExists == 0 {
+		return nil, fmt.Errorf(fmt.Sprintf(`Function %s not found`, name))
+	}
 
 	iter := c.client.Entries(config.Context,
 		logadmin.Filter(fmt.Sprintf(`resource.type="cloud_function" AND resource.labels.function_name="%s" AND timestamp >= "%s"`, name, lastSeconds)),
