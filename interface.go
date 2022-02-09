@@ -7,5 +7,5 @@ import (
 )
 
 type IFunctions interface {
-	GetLastFunctionsRun(name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error)
+	GetLastFunctionsRun(name, validationString, locations string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error)
 }
