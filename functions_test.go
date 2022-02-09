@@ -86,6 +86,7 @@ func TestFunctions_GetLastFunctionsRun(t *testing.T) {
 	type args struct {
 		name             string
 		validationString string
+		locations        string
 		seconds          time.Duration
 		secret           Secret
 	}
@@ -104,6 +105,7 @@ func TestFunctions_GetLastFunctionsRun(t *testing.T) {
 			args: args{
 				name:             "function-1",
 				validationString: "a",
+				locations:        "us-central1",
 				seconds:          time.Duration(60),
 			},
 			wantErr: true,
@@ -130,6 +132,7 @@ func TestFunctions_GetLastFunctionsRun(t *testing.T) {
 			args: args{
 				name:             "function-1",
 				validationString: "",
+				locations:        "us-central1",
 				seconds:          time.Duration(60),
 				secret: Secret{
 					JsonCredentials: []byte(`{"type": "service_account","project_id": "project_id","private_key_id": "private_key_id","private_key": "private_key","client_email": "client_email","client_id": "client_id","auth_uri": "auth_uri","token_uri": "token_uri","auth_provider_x509_cert_url": "auth_provider_x509_cert_url","client_x509_cert_url": "client_x509_cert_url"}`),
@@ -148,7 +151,7 @@ func TestFunctions_GetLastFunctionsRun(t *testing.T) {
 				config: tt.fields.config,
 			}
 
-			gotLastRun, err := f.GetLastFunctionsRun(tt.args.name, tt.args.validationString, tt.args.seconds)
+			gotLastRun, err := f.GetLastFunctionsRun(tt.args.name, tt.args.validationString, tt.args.locations, tt.args.seconds)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Functions.GetLastFunctionsRun() error = %v, wantErr %v", err, tt.wantErr)

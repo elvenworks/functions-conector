@@ -31,7 +31,7 @@ func InitFunctions(secret Secret) (f *Functions, err error) {
 
 }
 
-func (f *Functions) GetLastFunctionsRun(name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
+func (f *Functions) GetLastFunctionsRun(name, validationString, locations string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
 
 	client, err := client.NewClient(f.config)
 
@@ -39,7 +39,7 @@ func (f *Functions) GetLastFunctionsRun(name, validationString string, seconds t
 		return nil, err
 	}
 
-	lastRun, err = client.GetLastFunctionsRun(f.config, name, validationString, seconds)
+	lastRun, err = client.GetLastFunctionsRun(f.config, name, validationString, locations, seconds)
 
 	client.Close()
 

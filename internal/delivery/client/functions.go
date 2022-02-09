@@ -6,12 +6,14 @@ import (
 	"strings"
 	"time"
 
+	apiv1 "cloud.google.com/go/functions/apiv1"
 	"cloud.google.com/go/logging"
 	"cloud.google.com/go/logging/logadmin"
 	"github.com/elvenworks/functions-conector/domain"
 	"github.com/elvenworks/functions-conector/internal/driver/functions"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/iterator"
+	functionspb "google.golang.org/genproto/googleapis/cloud/functions/v1"
 )
 
 type Client struct {
@@ -31,38 +33,30 @@ func NewClient(config *functions.Config) (f *Client, err error) {
 	}, nil
 }
 
-func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
+func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationString, locations string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
 	const functionExecutionTook = "Function execution took"
 	var entries []*logging.Entry
 	var entriesClean []*logging.Entry
-	var countExists = 0
 	lastSeconds := time.Now().Add(-seconds * time.Second).Format(time.RFC3339)
 
-	iterExists := c.client.Entries(config.Context,
-		logadmin.Filter(fmt.Sprintf(`resource.type="cloud_function" AND resource.labels.function_name="%s"`, name)),
-		logadmin.NewestFirst(),
-	)
-
-	for {
-		_, err := iterExists.Next()
-
-		if countExists > 0 {
-			break
-		}
-
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			logrus.Errorf("could not read time series value for count, err: %s\n", err)
-			break
-		}
-
-		countExists = countExists + 1
+	client, err := apiv1.NewCloudFunctionsClient(config.Context, config.Option)
+	if err != nil {
+		return lastRun, fmt.Errorf("failed to create client: %v", err)
 	}
 
-	if countExists == 0 {
-		return nil, fmt.Errorf(fmt.Sprintf(`Function %s not found`, name))
+	defer client.Close()
+
+	req := &functionspb.GetFunctionRequest{
+		Name: fmt.Sprintf(`projects/%s/locations/%s/functions/%s`, config.Credentials.ProjectID, locations, name),
+	}
+
+	resp, err := client.GetFunction(config.Context, req)
+	if err != nil {
+		return lastRun, fmt.Errorf("failed to get function: %v", err)
+	}
+
+	if resp.Status != functionspb.CloudFunctionStatus_ACTIVE {
+		return lastRun, fmt.Errorf("%v is not activated", name)
 	}
 
 	iter := c.client.Entries(config.Context,
