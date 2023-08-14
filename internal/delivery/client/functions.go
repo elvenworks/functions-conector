@@ -6,14 +6,14 @@ import (
 	"strings"
 	"time"
 
-	apiv1 "cloud.google.com/go/functions/apiv1"
+	apiv2 "cloud.google.com/go/functions/apiv2"
+	functionspb "cloud.google.com/go/functions/apiv2/functionspb"
 	"cloud.google.com/go/logging"
 	"cloud.google.com/go/logging/logadmin"
 	"github.com/elvenworks/functions-conector/domain"
 	"github.com/elvenworks/functions-conector/internal/driver/functions"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/iterator"
-	functionspb "google.golang.org/genproto/googleapis/cloud/functions/v1"
 )
 
 type Client struct {
@@ -39,7 +39,7 @@ func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationS
 	var entriesClean []*logging.Entry
 	lastSeconds := time.Now().Add(-seconds * time.Second).Format(time.RFC3339)
 
-	client, err := apiv1.NewCloudFunctionsClient(config.Context, config.Option)
+	client, err := apiv2.NewFunctionClient(config.Context, config.Option)
 	if err != nil {
 		return lastRun, fmt.Errorf("failed to create client: %v", err)
 	}
@@ -55,7 +55,7 @@ func (c *Client) GetLastFunctionsRun(config *functions.Config, name, validationS
 		return lastRun, fmt.Errorf("failed to get function: %v", err)
 	}
 
-	if resp.Status != functionspb.CloudFunctionStatus_ACTIVE {
+	if resp.State != functionspb.Function_ACTIVE {
 		return lastRun, fmt.Errorf("%v is not activated", name)
 	}
 
