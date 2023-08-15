@@ -45,3 +45,17 @@ func (f *Functions) GetLastFunctionsRun(name, validationString, locations string
 
 	return lastRun, err
 }
+
+func (f *Functions) GetLastFunctionsRunGen2(name, locations string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
+	client, err := client.NewClient(f.config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastRun, err = client.GetLastFunctionsRunGen2(f.config, name, locations, seconds)
+
+	client.Close()
+
+	return lastRun, err
+}

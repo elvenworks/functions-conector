@@ -160,6 +160,16 @@ func TestFunctions_GetLastFunctionsRun(t *testing.T) {
 			if !reflect.DeepEqual(gotLastRun, tt.wantLastRun) {
 				t.Errorf("Functions.GetLastFunctionsRun() = %v, want %v", gotLastRun, tt.wantLastRun)
 			}
+
+			gotLastRun, err = f.GetLastFunctionsRunGen2(tt.args.name, tt.args.locations, tt.args.seconds)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Functions.GetLastFunctionsRun() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotLastRun, tt.wantLastRun) {
+				t.Errorf("Functions.GetLastFunctionsRun() = %v, want %v", gotLastRun, tt.wantLastRun)
+			}
 		})
 	}
 }
