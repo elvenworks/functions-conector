@@ -179,14 +179,15 @@ func (c *Client) GetLastFunctionsRunGen2(config *functions.Config, name, locatio
 	statusCode := 0
 
 	for _, entry := range entries {
-		entriesClean = append(entriesClean, entry)
 		if entry.HTTPRequest != nil {
 			statusCode = entry.HTTPRequest.Status
 			if entry.HTTPRequest.Status > 299 {
+				entriesClean = append(entriesClean, entry)
 				onError = true
+				break
 			}
+			entriesClean = append(entriesClean, entry)
 		}
-		break
 	}
 
 	if len(entriesClean) == 0 {
