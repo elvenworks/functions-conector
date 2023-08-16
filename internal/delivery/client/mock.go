@@ -18,6 +18,11 @@ func (mock MockClient) GetLastFunctionsRun(config *functions.Config, name, valid
 	return args.Error(0)
 }
 
+func (mock MockClient) GetLastFunctionsRunGen2(config *functions.Config, name, seconds time.Duration) (err error) {
+	args := mock.Called(config, name, seconds)
+	return args.Error(0)
+}
+
 func (mock MockClient) Close() {
 }
 

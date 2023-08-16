@@ -15,3 +15,8 @@ func (mock MockFunctions) GetLastFunctionsRun(name, validationString, locations 
 	args := mock.Called(name, validationString, locations, seconds)
 	return args.Get(0).(*domain.FunctionsLastRun), args.Error(1)
 }
+
+func (mock MockFunctions) GetLastFunctionsRunGen2(name, locations string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error) {
+	args := mock.Called(name, locations, seconds)
+	return args.Get(0).(*domain.FunctionsLastRun), args.Error(1)
+}

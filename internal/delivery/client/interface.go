@@ -18,5 +18,6 @@ type ILoggingClient interface {
 
 type IFunctionsClient interface {
 	GetLastFunctionsRun(config *functions.Config, name, validationString string, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error)
+	GetLastFunctionsRunGen2(config *functions.Config, name, seconds time.Duration) (lastRun *domain.FunctionsLastRun, err error)
 	Close()
 }
